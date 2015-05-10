@@ -1,0 +1,10 @@
+<?php
+
+return array(
+    'debug' => false,
+
+    \CWreden\GitLog\GitHub\GitHubServices::GITHUB_APP_NAME => 'GitLog',
+
+    \CWreden\GitLog\GitHub\GitHubServices::GITHUB_API_CLIENT_ID => '',
+    \CWreden\GitLog\GitHub\GitHubServices::GITHUB_API_CLIENT_SECRET => ''
+);

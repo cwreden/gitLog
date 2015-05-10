@@ -7,3 +7,4 @@ vendor/
 
 .idea
 docs/*.bak
+config/gitlog.conf.php
