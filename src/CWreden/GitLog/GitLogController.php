@@ -122,10 +122,51 @@ class GitLogController
             }
         }
 
+        $commitEntry = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/commits/' . $tagEntry->commit->sha);
+        $commitEntryFrom = null;
+        if ($tagEntryFrom !== null) {
+            $commitEntryFrom = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/commits/' . $tagEntryFrom->commit->sha);
+        }
+
+        $post = array(
+            'page' => 0,
+            'until' => $commitEntry->commit->committer->date
+        );
+        if ($commitEntryFrom !== null) {
+            $post['since'] = $commitEntryFrom->commit->committer->date;
+        }
+        $commits = array();
+        do {
+            $nextCommits = null;
+            $post['page']++;
+            $nextCommits = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/commits', $post, array(), true, true);
+            if (is_array($nextCommits) && count($nextCommits) > 0) $commits = array_merge($commits, $nextCommits);
+        } while (is_array($nextCommits) && count($nextCommits) === 30 && $post['page'] < 10);
+
+        if ($tagEntryFrom !== null && !empty($commits)) {
+            if ($tagEntryFrom->commit->sha === $commits[count($commits) -1]->sha) {
+                array_pop($commits);
+            }
+        }
+
+        $data = array();
+        foreach ($commits as $commit) {
+            $data[] = array(
+                'sha' => $commit->sha,
+                'message' => $commit->commit->message
+            );
+        }
+
+
         return new JsonResponse(array(
-            'tag' => $tag,
-            'changeLogTag' => $tagEntry,
-            'tagBefore' => $tagEntryFrom
+//            'tag' => $tag,
+//            'changeLogTag' => $tagEntry,
+//            'tagBefore' => $tagEntryFrom,
+//            'endCommit' => $commitEntry,
+//            'startCommit' => $commitEntryFrom,
+//            'commits' => $commits,
+            'commits' => $data
+//            'post' => $post
         ));
     }
 }
