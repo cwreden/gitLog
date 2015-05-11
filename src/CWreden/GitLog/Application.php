@@ -21,8 +21,6 @@ class Application extends \Silex\Application
     {
         parent::__construct($values);
 
-        $app = $this;
-
         $this->register(new SessionServiceProvider());
         $this->register(new ServiceControllerServiceProvider());
 
@@ -30,9 +28,13 @@ class Application extends \Silex\Application
         $this->mount('', new OAuthControllerProvider());
         $this->mount('', new GitLogControllerProvider());
 
-        // TODO Load Commits
-        // TODO ...
+        // TODO Implement entities
+
+        // TODO Create ChangeLog
+        // TODO Edit/Ignore commit messages
+
         // TODO Export Services
+
         // TODO Search Services
         // TODO Report Services
     }
