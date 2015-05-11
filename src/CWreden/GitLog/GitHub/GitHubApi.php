@@ -35,18 +35,29 @@ class GitHubApi
      * @param array $post
      * @param array $headers
      * @param bool $asObject
+     * @param bool $asGet
      * @return array|Object
      */
     public function request(
         $api,
         array $post = array(),
         array $headers = array(),
-        $asObject = true
+        $asObject = true,
+        $asGet = false
     ) {
-        $ch = curl_init(self::BASE_URL . $api);
+        $parameters = http_build_query($post);
+
+        $url = self::BASE_URL . $api;
+        if ($asGet) {
+            $url .= '?' . $parameters;
+        }
+
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
-        if(is_array(array()) && !empty($post)) curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        if(!$asGet && is_array(array()) && !empty($post)) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
+        }
 
         $headers[] = 'Accept: application/json';
 
@@ -56,6 +67,7 @@ class GitHubApi
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($ch);
+        curl_close($ch);
         return json_decode($response, !$asObject);
     }
 
