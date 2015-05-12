@@ -23,4 +23,6 @@
 ##### Version 3.0.0
 - Support Stash
 - Listing all repositories
+- Bitbucket support
+- GitLab support
 - ...
