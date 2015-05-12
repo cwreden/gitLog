@@ -98,17 +98,18 @@ class GitLogController
             'page' => $page
         ), array(), true, true);
 
-//        $data = array();
-//        foreach ($commits as $commit) {
-//            $data[] = array(
-//                'name' => $commit->name,
-//                'commit' => $commit->commit,
-//                'commits_url' => 'http://git-log.org/repos/' . $owner . '/' . $repo . '/tags/' . $commit->name . '/commits',
-//                'change_log_url' => 'http://git-log.org/changelog/' . $owner . '/' . $repo . '/' . $commit->name
-//            );
-//        }
+        $data = array();
+        foreach ($commits as $commit) {
+            $data[] = array(
+                'sha' => $commit->sha,
+                'message' => $commit->commit->message,
+                'ignored' => false,
+                'originalMessage' => $commit->commit->message,
+                'type' => 'general'
+            );
+        }
 
-        return new JsonResponse($commits);
+        return new JsonResponse($data);
     }
 
     /**
