@@ -6,6 +6,7 @@ namespace CWreden\GitLog;
 use CWreden\GitLog\GitHub\GitHub;
 use CWreden\GitLog\GitHub\GitHubApi;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class GitLogController
@@ -47,6 +48,10 @@ class GitLogController
             $html .= '<pre>';
             $html .= print_r($user, true);
             $html .= '</pre>';
+            return new JsonResponse(array(
+                'repos' => 'http://git-log.org/repos',
+                'user' => $user
+            ));
 
         } else {
             $html .= '<h3>Not logged in</h3>';
@@ -58,11 +63,15 @@ class GitLogController
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function reposAction()
+    public function getOwnRepoListAction(Request $request)
     {
-        $repositories = $this->gitHubApi->request('/user/repos', array(), array());
+        $page = $request->query->get('page', 1);
+        $repositories = $this->gitHubApi->request('/user/repos', array(
+            'page' => $page
+        ), array(), true, true);
 
         $data = array();
         foreach ($repositories as $repository) {
@@ -73,6 +82,7 @@ class GitLogController
                 'description' => $repository->description,
                 'updated_at' => $repository->updated_at,
                 'pushed_at' => $repository->pushed_at,
+                'commits_url' => 'http://git-log.org/repos/' . $repository->full_name . '/commits',
                 'tags_url' => 'http://git-log.org/repos/' . $repository->full_name . '/tags'
             );
         }
@@ -80,21 +90,47 @@ class GitLogController
         return new JsonResponse($data);
     }
 
+    public function getCommitListAction($owner, $repo, Request $request)
+    {
+
+        $page = $request->query->get('page', 1);
+        $commits = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits', array(
+            'page' => $page
+        ), array(), true, true);
+
+//        $data = array();
+//        foreach ($commits as $commit) {
+//            $data[] = array(
+//                'name' => $commit->name,
+//                'commit' => $commit->commit,
+//                'commits_url' => 'http://git-log.org/repos/' . $owner . '/' . $repo . '/tags/' . $commit->name . '/commits',
+//                'change_log_url' => 'http://git-log.org/changelog/' . $owner . '/' . $repo . '/' . $commit->name
+//            );
+//        }
+
+        return new JsonResponse($commits);
+    }
+
     /**
-     * @param $user
+     * @param $owner
      * @param $repo
+     * @param Request $request
      * @return JsonResponse
      */
-    public function tagsAction($user, $repo)
+    public function getTagListAction($owner, $repo, Request $request)
     {
-        $tags = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/tags', array(), array());
+        $page = $request->query->get('page', 1);
+        $tags = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/tags', array(
+            'page' => $page
+        ), array(), true, true);
 
         $data = array();
         foreach ($tags as $tag) {
             $data[] = array(
                 'name' => $tag->name,
                 'commit' => $tag->commit,
-                'change_log_url' => 'http://git-log.org/repos/' . $user . '/' . $repo . '/changelog/' . $tag->name
+                'commits_url' => 'http://git-log.org/repos/' . $owner . '/' . $repo . '/tags/' . $tag->name . '/commits',
+                'change_log_url' => 'http://git-log.org/changelog/' . $owner . '/' . $repo . '/' . $tag->name
             );
         }
 
@@ -102,14 +138,15 @@ class GitLogController
     }
 
     /**
-     * @param $user
+     * TODO optimize getting commits! Maybe by parents attribute
+     * @param $owner
      * @param $repo
      * @param $tag
      * @return JsonResponse
      */
-    public function changeLogAction($user, $repo, $tag)
+    public function getCommitListForTagAction($owner, $repo, $tag)
     {
-        $tagEntries = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/tags');
+        $tagEntries = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/tags');
         $tagEntry = null;
         $tagEntryFrom = null;
         for ($i = 0; $i < count($tagEntries); $i++) {
@@ -122,10 +159,10 @@ class GitLogController
             }
         }
 
-        $commitEntry = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/commits/' . $tagEntry->commit->sha);
+        $commitEntry = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits/' . $tagEntry->commit->sha);
         $commitEntryFrom = null;
         if ($tagEntryFrom !== null) {
-            $commitEntryFrom = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/commits/' . $tagEntryFrom->commit->sha);
+            $commitEntryFrom = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits/' . $tagEntryFrom->commit->sha);
         }
 
         $post = array(
@@ -139,9 +176,9 @@ class GitLogController
         do {
             $nextCommits = null;
             $post['page']++;
-            $nextCommits = $this->gitHubApi->request('/repos/' . $user . '/' . $repo . '/commits', $post, array(), true, true);
+            $nextCommits = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits', $post, array(), true, true);
             if (is_array($nextCommits) && count($nextCommits) > 0) $commits = array_merge($commits, $nextCommits);
-        } while (is_array($nextCommits) && count($nextCommits) === 30 && $post['page'] < 10);
+        } while (is_array($nextCommits) && count($nextCommits) === 30);
 
         if ($tagEntryFrom !== null && !empty($commits)) {
             if ($tagEntryFrom->commit->sha === $commits[count($commits) -1]->sha) {
@@ -159,14 +196,21 @@ class GitLogController
 
 
         return new JsonResponse(array(
-//            'tag' => $tag,
-//            'changeLogTag' => $tagEntry,
-//            'tagBefore' => $tagEntryFrom,
-//            'endCommit' => $commitEntry,
-//            'startCommit' => $commitEntryFrom,
-//            'commits' => $commits,
             'commits' => $data
-//            'post' => $post
         ));
+    }
+
+    /**
+     * @param $owner
+     * @param $repo
+     * @param $tag
+     * @param Request $request
+     * @return Response
+     */
+    public function getChangeLogAction($owner, $repo, $tag, Request $request)
+    {
+        $format = $request->query->get('format', 'json');
+        // TODO not implemented!
+        return new Response();
     }
 }

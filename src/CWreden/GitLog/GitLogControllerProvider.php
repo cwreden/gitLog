@@ -33,9 +33,12 @@ class GitLogControllerProvider implements ControllerProviderInterface
 
         $collection->match('/', GitLogServices::CONTROLLER . ':indexAction');
 
-        $collection->match('/repos', GitLogServices::CONTROLLER . ':reposAction');
-        $collection->match('/repos/{user}/{repo}/tags', GitLogServices::CONTROLLER . ':tagsAction');
-        $collection->match('/repos/{user}/{repo}/changelog/{tag}', GitLogServices::CONTROLLER . ':changeLogAction');
+        $collection->match('/repos', GitLogServices::CONTROLLER . ':getOwnRepoListAction');
+        $collection->match('/users/{owner}/repos', GitLogServices::CONTROLLER . ':getRepoListAction');
+        $collection->match('/repos/{owner}/{repo}/commits', GitLogServices::CONTROLLER . ':getCommitListAction');
+        $collection->match('/repos/{owner}/{repo}/tags', GitLogServices::CONTROLLER . ':getTagListAction');
+        $collection->match('/repos/{owner}/{repo}/tags/{tag}/commits', GitLogServices::CONTROLLER . ':getCommitListForTagAction');
+        $collection->match('/changelog/{owner}/{repo}/{tag}', GitLogServices::CONTROLLER . ':getChangeLogAction');
 
         return $collection;
     }
