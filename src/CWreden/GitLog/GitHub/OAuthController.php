@@ -45,7 +45,7 @@ class OAuthController
         $params = array(
             'client_id' => $this->oAuthClientId,
             'redirect_uri' => 'http://' . $_SERVER['SERVER_NAME'] . '/authorize/github',
-            'scope' => 'user',
+            'scope' => '',
             'state' => $state
         );
         return new RedirectResponse(GitHub::BASE_URL . '/login/oauth/authorize?' . http_build_query($params));
