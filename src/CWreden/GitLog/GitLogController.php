@@ -90,6 +90,41 @@ class GitLogController
         return new JsonResponse($data);
     }
 
+    /**
+     * @param Request $request
+     * @param $owner
+     * @return JsonResponse
+     */
+    public function getRepoListAction(Request $request, $owner)
+    {
+        $page = $request->query->get('page', 1);
+        $repositories = $this->gitHubApi->request('/users/' . $owner . '/repos', array(
+            'page' => $page
+        ), array(), true, true);
+
+        $data = array();
+        foreach ($repositories as $repository) {
+            $data[] = array(
+                'id' => $repository->id,
+                'name' => $repository->name,
+                'full_name' => $repository->full_name,
+                'description' => $repository->description,
+                'updated_at' => $repository->updated_at,
+                'pushed_at' => $repository->pushed_at,
+                'commits_url' => 'http://git-log.org/repos/' . $repository->full_name . '/commits',
+                'tags_url' => 'http://git-log.org/repos/' . $repository->full_name . '/tags'
+            );
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
+     * @param $owner
+     * @param $repo
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getCommitListAction($owner, $repo, Request $request)
     {
 
