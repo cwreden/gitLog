@@ -69,9 +69,7 @@ class GitLogController
     public function getOwnRepoListAction(Request $request)
     {
         $page = $request->query->get('page', 1);
-        $repositories = $this->gitHubApi->request('/user/repos', array(
-            'page' => $page
-        ), array(), true, true);
+        $repositories = $this->gitHubApi->getOwnRepositories($page);
 
         $data = array();
         foreach ($repositories as $repository) {
@@ -98,9 +96,7 @@ class GitLogController
     public function getRepoListAction(Request $request, $owner)
     {
         $page = $request->query->get('page', 1);
-        $repositories = $this->gitHubApi->request('/users/' . $owner . '/repos', array(
-            'page' => $page
-        ), array(), true, true);
+        $repositories = $this->gitHubApi->getRepositoriesForUser($owner, $page);
 
         $data = array();
         foreach ($repositories as $repository) {
@@ -129,9 +125,7 @@ class GitLogController
     {
 
         $page = $request->query->get('page', 1);
-        $commits = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits', array(
-            'page' => $page
-        ), array(), true, true);
+        $commits = $this->gitHubApi->getCommitsForRepository($owner, $repo, $page);
 
         $data = array();
         foreach ($commits as $commit) {
@@ -156,9 +150,7 @@ class GitLogController
     public function getTagListAction($owner, $repo, Request $request)
     {
         $page = $request->query->get('page', 1);
-        $tags = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/tags', array(
-            'page' => $page
-        ), array(), true, true);
+        $tags = $this->gitHubApi->getGitTagsForRepository($owner, $repo, $page);
 
         $data = array();
         foreach ($tags as $tag) {
@@ -174,7 +166,6 @@ class GitLogController
     }
 
     /**
-     * TODO optimize getting commits! Maybe by parents attribute
      * @param $owner
      * @param $repo
      * @param $tag
@@ -182,46 +173,7 @@ class GitLogController
      */
     public function getCommitListForTagAction($owner, $repo, $tag)
     {
-        $tagEntries = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/tags');
-        $tagEntry = null;
-        $tagEntryFrom = null;
-        for ($i = 0; $i < count($tagEntries); $i++) {
-            if ($tagEntries[$i]->name === $tag) {
-                $tagEntry = $tagEntries[$i];
-                if (isset($tagEntries[$i + 1])) {
-                    $tagEntryFrom = $tagEntries[$i + 1];
-                }
-                break;
-            }
-        }
-
-        $commitEntry = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits/' . $tagEntry->commit->sha);
-        $commitEntryFrom = null;
-        if ($tagEntryFrom !== null) {
-            $commitEntryFrom = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits/' . $tagEntryFrom->commit->sha);
-        }
-
-        $post = array(
-            'page' => 0,
-            'until' => $commitEntry->commit->committer->date
-        );
-        if ($commitEntryFrom !== null) {
-            $post['since'] = $commitEntryFrom->commit->committer->date;
-        }
-        $commits = array();
-        do {
-            $nextCommits = null;
-            $post['page']++;
-            $nextCommits = $this->gitHubApi->request('/repos/' . $owner . '/' . $repo . '/commits', $post, array(), true, true);
-            if (is_array($nextCommits) && count($nextCommits) > 0) $commits = array_merge($commits, $nextCommits);
-        } while (is_array($nextCommits) && count($nextCommits) === 30);
-
-        if ($tagEntryFrom !== null && !empty($commits)) {
-            if ($tagEntryFrom->commit->sha === $commits[count($commits) -1]->sha) {
-                array_pop($commits);
-            }
-        }
-
+        $commits = $this->gitHubApi->getCommitsForTag($owner, $repo, $tag);
         $data = array();
         foreach ($commits as $commit) {
             $data[] = array(
@@ -229,7 +181,6 @@ class GitLogController
                 'message' => $commit->commit->message
             );
         }
-
 
         return new JsonResponse(array(
             'commits' => $data
