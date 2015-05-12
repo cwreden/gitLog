@@ -31,14 +31,14 @@ class GitLogControllerProvider implements ControllerProviderInterface
         $collection = $app['controllers_factory'];
 
 
-        $collection->match('/', GitLogServices::CONTROLLER . ':indexAction');
+        $collection->get('/', GitLogServices::CONTROLLER . ':indexAction');
 
-        $collection->match('/repos', GitLogServices::CONTROLLER . ':getOwnRepoListAction');
-        $collection->match('/users/{owner}/repos', GitLogServices::CONTROLLER . ':getRepoListAction');
-        $collection->match('/repos/{owner}/{repo}/commits', GitLogServices::CONTROLLER . ':getCommitListAction');
-        $collection->match('/repos/{owner}/{repo}/tags', GitLogServices::CONTROLLER . ':getTagListAction');
-        $collection->match('/repos/{owner}/{repo}/tags/{tag}/commits', GitLogServices::CONTROLLER . ':getCommitListForTagAction');
-        $collection->match('/changelog/{owner}/{repo}/{tag}', GitLogServices::CONTROLLER . ':getChangeLogAction');
+        $collection->get('/repos', GitLogServices::CONTROLLER . ':getOwnRepoListAction');
+        $collection->get('/users/{owner}/repos', GitLogServices::CONTROLLER . ':getRepoListAction');
+        $collection->get('/repos/{owner}/{repo}/commits', GitLogServices::CONTROLLER . ':getCommitListAction');
+        $collection->get('/repos/{owner}/{repo}/tags', GitLogServices::CONTROLLER . ':getTagListAction');
+        $collection->get('/repos/{owner}/{repo}/tags/{tag}/commits', GitLogServices::CONTROLLER . ':getCommitListForTagAction');
+        $collection->get('/changelog/{owner}/{repo}/{tag}', GitLogServices::CONTROLLER . ':getChangeLogAction');
 
         return $collection;
     }
