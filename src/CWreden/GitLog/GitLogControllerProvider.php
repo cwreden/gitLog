@@ -27,6 +27,12 @@ class GitLogControllerProvider implements ControllerProviderInterface
             );
         });
 
+        $app[GitLogServices::SEARCH_CONTROLLER] = $app->share(function ($pimple) {
+            return new GitLogSearchController(
+                $pimple[GitHubServices::GITHUB_API]
+            );
+        });
+
         /** @var ControllerCollection $collection */
         $collection = $app['controllers_factory'];
 
@@ -39,6 +45,8 @@ class GitLogControllerProvider implements ControllerProviderInterface
         $collection->get('/repos/{owner}/{repo}/tags', GitLogServices::CONTROLLER . ':getTagListAction');
         $collection->get('/repos/{owner}/{repo}/tags/{tag}/commits', GitLogServices::CONTROLLER . ':getCommitListForTagAction');
         $collection->get('/changelog/{owner}/{repo}/{tag}', GitLogServices::CONTROLLER . ':getChangeLogAction');
+
+        $collection->get('/search/repositories', GitLogServices::SEARCH_CONTROLLER . ':searchRepositories');
 
         return $collection;
     }
