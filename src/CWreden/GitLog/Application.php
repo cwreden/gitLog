@@ -34,8 +34,6 @@ class Application extends \Silex\Application
         $this->mount('', new OAuthControllerProvider());
         $this->mount('', new GitLogControllerProvider());
 
-        // TODO Implement entities
-
         // TODO Create ChangeLog
         // TODO Edit/Ignore commit messages
 
