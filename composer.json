@@ -1,5 +1,5 @@
 {
-  "name": "cwreden/git_log",
+  "name": "cwreden/gitLog",
   "description": "Github bases changelog service.",
   "minimum-stability": "stable",
   "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
@@ -10,23 +10,20 @@
     }
   ],
   "require": {
-
-    "doctrine/orm": "*",
-    "simplethings/entity-audit-bundle": "*",
-
+    "twig/twig": "~1.18",
+    "doctrine/orm": "~2.5",
     "silex/silex": "*",
-    "pimple/pimple": "*",
-    "symfony/event-dispatcher": "*",
-
-    "monolog/monolog": "*",
-    "symfony/monolog-bridge": "*",
-
-    "swiftmailer/swiftmailer": "*"
+    "pimple/pimple": "*"
   },
   "require-dev": {
+    "symfony/event-dispatcher": "*",
+    "monolog/monolog": "*",
+    "symfony/monolog-bridge": "*",
+    "swiftmailer/swiftmailer": "*",
+    "simplethings/entity-audit-bundle": "0.7.*",
     "chrisboulton/php-resque": "dev-master",
-    "nocarrier/hal": "dev-master",
-    "symfony/yaml": "*"
+    "symfony/yaml": "~2.6",
+    "nocarrier/hal": "0.9.*"
   },
   "autoload": {
     "psr-0": {
