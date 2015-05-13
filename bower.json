@@ -1,0 +1,26 @@
+{
+  "name": "cwreden/gitLog",
+  "version": "0.0.0",
+  "homepage": "https://github.com/cwreden/gitLog",
+  "authors": [
+    "cwreden <christian.wreden@googlemail.com>"
+  ],
+  "description": "Git based changelog service.",
+  "keywords": [
+    "git",
+    "changelog"
+  ],
+  "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "react": "~0.13.3",
+    "react-bootstrap": "~0.22.0"
+  }
+}
