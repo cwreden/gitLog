@@ -4,8 +4,11 @@ namespace CWreden\GitLog;
 
 use CWreden\GitLog\GitHub\GitHubServiceProvider;
 use CWreden\GitLog\GitHub\OAuthControllerProvider;
+use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\SessionServiceProvider;
+use Silex\Provider\TwigServiceProvider;
+use Silex\Provider\UrlGeneratorServiceProvider;
 
 
 /**
@@ -23,6 +26,9 @@ class Application extends \Silex\Application
 
         $this->register(new SessionServiceProvider());
         $this->register(new ServiceControllerServiceProvider());
+        $this->register(new TwigServiceProvider());
+        $this->register(new DoctrineServiceProvider());
+        $this->register(new UrlGeneratorServiceProvider());
 
         $this->register(new GitHubServiceProvider());
         $this->mount('', new OAuthControllerProvider());
