@@ -65,7 +65,7 @@ class GitLogController
                 'name' => $this->appName
             ),
             'username' => $username,
-            'loggedIn' => $isAuthorized
+            'isAuthorized' => $isAuthorized
         ));
     }
 
