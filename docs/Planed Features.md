@@ -25,4 +25,5 @@
 - Listing all repositories
 - Bitbucket support
 - GitLab support
+- Hooks
 - ...
