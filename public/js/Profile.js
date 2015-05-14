@@ -1,10 +1,6 @@
 'use strict';
 
 GitLog.Profile = React.createClass({
-    componentDidMount: function () {
-        console.log(this.props.params.owner);
-        // TODO load user data
-    },
     render: function () {
         var RepositoryList = GitLog.RepositoryList;
         return (
