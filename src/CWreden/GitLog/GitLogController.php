@@ -24,13 +24,19 @@ class GitLogController
      * @var Twig_Environment
      */
     private $twig;
+    /**
+     * @var string
+     */
+    private $appName;
 
     /**
+     * @param $appName
      * @param GitHub $gitHub
      * @param GitHubApi $gitHubApi
      * @param Twig_Environment $twig
      */
     function __construct(
+        $appName,
         GitHub $gitHub,
         GitHubApi $gitHubApi,
         Twig_Environment $twig
@@ -39,6 +45,7 @@ class GitLogController
         $this->gitHub = $gitHub;
         $this->gitHubApi = $gitHubApi;
         $this->twig = $twig;
+        $this->appName = $appName;
     }
 
     /**
@@ -46,34 +53,19 @@ class GitLogController
      */
     public function indexAction()
     {
-        $html = '';
-
-        if($this->gitHub->isAuthorized()) {
+        $username = '';
+        $isAuthorized = $this->gitHub->isAuthorized();
+        if($isAuthorized) {
             $user = $this->gitHubApi->request('/user');
-
-            $html .= '<h3>Logged In</h3>';
-            $html .= '<h4>' . $user->name . '</h4>';
-            $html .= '<pre>';
-            $html .= print_r($user, true);
-            $html .= '</pre>';
-            return new JsonResponse(array(
-                'repos' => 'http://git-log.org/repos',
-                'user' => $user
-            ));
-
-        } else {
-            $html .= '<h3>Not logged in</h3>';
-            $html .= '<p><a href="/sign/in">Log In</a></p>';
+            $username = $user->login;
         }
 
-//            $html .= '<pre>' . print_r($request->getSession()->all(), true) . '</pre>';
         return $this->twig->render('index.html', array(
-            'navigation' => array(
-                array(
-                    'href' => '/repos',
-                    'caption' => 'Repositories'
-                )
-            )
+            'app' => array(
+                'name' => $this->appName
+            ),
+            'username' => $username,
+            'loggedIn' => $isAuthorized
         ));
     }
 

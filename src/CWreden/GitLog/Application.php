@@ -31,6 +31,7 @@ class Application extends \Silex\Application
         $this->register(new UrlGeneratorServiceProvider());
 
         $this->register(new GitHubServiceProvider());
+        $this->register(new GitLogServiceProvider());
         $this->mount('', new OAuthControllerProvider());
         $this->mount('', new GitLogControllerProvider());
 
