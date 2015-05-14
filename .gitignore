@@ -8,4 +8,4 @@ vendor/
 .idea
 docs/*.bak
 config/gitlog.conf.php
-bower_components
+public/components
