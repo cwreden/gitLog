@@ -10,10 +10,10 @@ GitLog.NavigationBar = React.createClass({
         var MenuItem = ReactBootstrap.MenuItem;
         var Input = ReactBootstrap.Input;
 
-        var userLink = '#/user/' + username;
+        var userLink = '#/' + username;
 
         return (
-            <Navbar brand={GitLog.name} toggleNavKey={0}>
+            <Navbar brand={GitLog.name} toggleNavKey={0} href="#/">
                 <CollapsibleNav eventKey={0}> {/* This is the eventKey referenced */}
                     <Nav navbar>
                         <NavItem eventKey={1} href='#/Dashboard'>Dashboard</NavItem>

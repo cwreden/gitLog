@@ -9,7 +9,7 @@ GitLog.Application = React.createClass({
         return (
             <div>
                 <NavigationBar/>
-                <div id="content">
+                <div id="content" className="container centered">
                     <RouteHandler/>
                 </div>
             </div>
