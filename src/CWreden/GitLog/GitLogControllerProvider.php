@@ -23,7 +23,8 @@ class GitLogControllerProvider implements ControllerProviderInterface
         $app[GitLogServices::CONTROLLER] = $app->share(function ($pimple) {
             return new GitLogController(
                 $pimple[GitHubServices::GITHUB],
-                $pimple[GitHubServices::GITHUB_API]
+                $pimple[GitHubServices::GITHUB_API],
+                $pimple['twig']
             );
         });
 

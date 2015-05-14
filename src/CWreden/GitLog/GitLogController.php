@@ -8,6 +8,7 @@ use CWreden\GitLog\GitHub\GitHubApi;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig_Environment;
 
 class GitLogController
 {
@@ -19,18 +20,25 @@ class GitLogController
      * @var GitHubApi
      */
     private $gitHubApi;
+    /**
+     * @var Twig_Environment
+     */
+    private $twig;
 
     /**
      * @param GitHub $gitHub
      * @param GitHubApi $gitHubApi
+     * @param Twig_Environment $twig
      */
     function __construct(
         GitHub $gitHub,
-        GitHubApi $gitHubApi
+        GitHubApi $gitHubApi,
+        Twig_Environment $twig
     )
     {
         $this->gitHub = $gitHub;
         $this->gitHubApi = $gitHubApi;
+        $this->twig = $twig;
     }
 
     /**
@@ -59,7 +67,14 @@ class GitLogController
         }
 
 //            $html .= '<pre>' . print_r($request->getSession()->all(), true) . '</pre>';
-        return new Response($html);
+        return $this->twig->render('index.html', array(
+            'navigation' => array(
+                array(
+                    'href' => '/repos',
+                    'caption' => 'Repositories'
+                )
+            )
+        ));
     }
 
     /**
