@@ -18,6 +18,7 @@
 - Automatic commit changelog in the specific repository
 - Listing organisation repositories
 - Commandline tool, for private local repositories
+- Filter to remove some commits directly at changelog generating
 
 
 ##### Version 3.0.0
