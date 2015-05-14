@@ -13,9 +13,10 @@ var NotFound = React.createClass({
 
 var routes = (
     <Route handler={GitLog.Application}>
+        <Route path="Home" handler={GitLog.Home}/>
         <Route path="Dashboard" handler={GitLog.Dashboard}/>
-        <Route path=":owner" handler={GitLog.Profile}/>
-        <Route path=":owner/:repo" handler={GitLog.Repository}/>
+        <Route path="Users/:owner" handler={GitLog.Profile}/>
+        <Route path="Repos/:owner/:repo" handler={GitLog.Repository}/>
         <DefaultRoute handler={GitLog.Home}/>
         <NotFoundRoute handler={NotFound} />
     </Route>

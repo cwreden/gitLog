@@ -25,7 +25,7 @@ GitLog.RepositoryList = React.createClass({
         var ListGroup = ReactBootstrap.ListGroup;
         var nodes = this.state.data.map(function (data) {
             var ListGroupItem = ReactBootstrap.ListGroupItem;
-            var link = '#/' + me.props.owner + '/' + data.name;
+            var link = '#/Repos/' + me.props.owner + '/' + data.name;
             return (
                 //<RepositoryListEntry key={data.id} owner={me.props.owner} repo={data.name}/>
                 <ListGroupItem header={data.name} href={link}>{data.description}</ListGroupItem>
