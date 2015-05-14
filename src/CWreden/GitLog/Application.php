@@ -41,5 +41,9 @@ class Application extends \Silex\Application
 
         // TODO Search Services
         // TODO Report Services
+
+        foreach ($values as $key => $value) {
+            $this[$key] = $value;
+        }
     }
 }
