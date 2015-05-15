@@ -17,8 +17,9 @@ var routes = (
         <Route path="Dashboard" handler={GitLog.Dashboard}/>
         <Route path="Users/:owner" handler={GitLog.Profile}/>
         <Route path="Repos/:owner/:repo" handler={GitLog.Repository}/>
+        <Route path="ChangeLog/:owner/:repo/:tag" handler={GitLog.ChangeLog}/>
         <DefaultRoute handler={GitLog.Home}/>
-        <NotFoundRoute handler={NotFound} />
+        <NotFoundRoute handler={NotFound}/>
     </Route>
 );
 
