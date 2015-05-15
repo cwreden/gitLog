@@ -205,6 +205,8 @@ class GitLogController
     {
         $format = $request->query->get('format', 'json');
         // TODO not implemented!
-        return new Response();
+        return new JsonResponse(array(
+            'data' => array()
+        ));
     }
 }

@@ -27,17 +27,19 @@ GitLog.GitTagList = React.createClass({
         var me = this;
         var Panel = ReactBootstrap.Panel;
         var ListGroup = ReactBootstrap.ListGroup;
-        var nodes = this.state.data.map(function (data) {
+        var nodes = this.state.data.map(function (data, key) {
             var ListGroupItem = ReactBootstrap.ListGroupItem;
             var sha = data.commit.sha;
             var name = data.name;
             if (jQuery.isPlainObject(me.props.selectedGitTag) && me.props.selectedGitTag.commit.sha === sha) {
                 return (
-                    <ListGroupItem key={sha} id={sha} active onClick={me.clickGitTag.bind(me, name, sha, data)}>{name}</ListGroupItem>
+                    <ListGroupItem key={key} id={sha} active onClick={me.clickGitTag.bind(me, name, sha, data)}>
+                        {name}
+                    </ListGroupItem>
                 );
             }
             return (
-                <ListGroupItem key={sha} id={sha} onClick={me.clickGitTag.bind(me, name, sha, data)}>{name}</ListGroupItem>
+                <ListGroupItem key={key} id={sha} onClick={me.clickGitTag.bind(me, name, sha, data)}>{name}</ListGroupItem>
             );
         });
         return (

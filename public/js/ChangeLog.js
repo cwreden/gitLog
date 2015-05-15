@@ -6,15 +6,13 @@ GitLog.ChangeLog = React.createClass({
             data: []
         };
     },
-    componentWillReceiveProps: function(props) {
-        this.setState({data: []});
-
+    componentDidMount: function() {
         $.ajax({
-            url: '/repos/' + props.owner + '/' + props.repo + '/tags/' + props.gitTag.name + '/commits',
+            url: '/changelog/' + this.props.params.owner + '/' + this.props.params.repo + '/' + this.props.params.tag,
             dataType: 'json',
             cache: false,
             success: function(response) {
-                this.setState({data: response.commits});
+                this.setState(response);
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(status, err.toString());
@@ -24,11 +22,7 @@ GitLog.ChangeLog = React.createClass({
     render: function () {
         var Panel = ReactBootstrap.Panel;
         var ListGroup = ReactBootstrap.ListGroup;
-        var title = 'Commits';
-
-        if (jQuery.isPlainObject(this.props.gitTag)) {
-            title = 'Commits for Tag ' + this.props.gitTag.name;
-        }
+        var title = 'ChangeLog for ' + this.props.params.owner + '/' + this.props.params.repo + '/' + this.props.params.tag;
 
         var nodes = this.state.data.map(function (data) {
             var ListGroupItem = ReactBootstrap.ListGroupItem;
