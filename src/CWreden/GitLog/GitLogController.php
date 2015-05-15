@@ -178,8 +178,9 @@ class GitLogController
      * @param $tag
      * @return JsonResponse
      */
-    public function getCommitListForTagAction($owner, $repo, $tag)
+    public function getCommitListForTagAction($owner, $repo, $tag, Request $request)
     {
+        $page = $request->query->get('page', 1);
         $commits = $this->gitHubApi->getCommitsForTag($owner, $repo, $tag);
         $data = array();
         foreach ($commits as $commit) {

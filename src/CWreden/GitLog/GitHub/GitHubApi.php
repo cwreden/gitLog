@@ -125,9 +125,10 @@ class GitHubApi
      * @param $owner
      * @param $repo
      * @param $tag
+     * @param int $page
      * @return array
      */
-    public function getCommitsForTag($owner, $repo, $tag)
+    public function getCommitsForTag($owner, $repo, $tag, $page = 1)
     {
         $tagEntries = $this->request('/repos/' . $owner . '/' . $repo . '/tags');
         $tagEntry = null;
@@ -149,19 +150,13 @@ class GitHubApi
         }
 
         $post = array(
-            'page' => 0,
+            'page' => $page,
             'until' => $commitEntry->commit->committer->date
         );
         if ($commitEntryFrom !== null) {
             $post['since'] = $commitEntryFrom->commit->committer->date;
         }
-        $commits = array();
-        do {
-            $nextCommits = null;
-            $post['page']++;
-            $nextCommits = $this->request('/repos/' . $owner . '/' . $repo . '/commits', $post, array(), true, true);
-            if (is_array($nextCommits) && count($nextCommits) > 0) $commits = array_merge($commits, $nextCommits);
-        } while (is_array($nextCommits) && count($nextCommits) === 30);
+        $commits = $this->request('/repos/' . $owner . '/' . $repo . '/commits', $post, array(), true, true);
 
         if ($tagEntryFrom !== null && !empty($commits)) {
             if ($tagEntryFrom->commit->sha === $commits[count($commits) -1]->sha) {
